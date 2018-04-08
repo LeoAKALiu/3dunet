@@ -24,12 +24,7 @@ def train(image_path, mask_path):
         os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1"
         stop = EarlyStopping(patience=4)
 
-        # checkpoint = ModelCheckpoint(filepath='/checkpoint-{epoch:02d}-{val_loss:.4f}.hdf5',
-        #                             monitor='val_loss', verbose=1, save_best_only=True)
-
-
         model = unet(lr=1e-4)
-        model.summary()
         model.fit_generator(generator=generator(image_train, mask_train),
                             steps_per_epoch=len(image_train),
                             epochs=10,
