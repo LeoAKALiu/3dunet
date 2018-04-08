@@ -120,14 +120,6 @@ def zoom(image, seed=42):
     else:
         return image
 
-def smooth(image, seed=42):
-
-    '''gaussian filter'''
-
-    sigma = np.random.uniform(0.6, 1.3)
-
-    return ndimage.gaussian_filter(image, sigma=sigma)
-
 
 # def brighter(image, seed=42):
 # #
