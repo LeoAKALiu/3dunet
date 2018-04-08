@@ -125,7 +125,7 @@ def smooth(image, seed=42):
     '''gaussian filter'''
 
     np.random.seed(seed)
-    sigma = np.random.randn(0.6, 1.3)
+    sigma = np.random.uniform(0.6, 1.3)
 
     return ndimage.gaussian_filter(image, sigma=sigma)
 
