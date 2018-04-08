@@ -120,6 +120,15 @@ def zoom(image, seed=42):
     else:
         return image
 
+def smooth(image, seed=42):
+
+    '''gaussian filter'''
+
+    np.random.seed(seed)
+    sigma = np.random.randn(0.6, 1.3)
+
+    return ndimage.gaussian_filter(image, sigma=sigma)
+
 
 # def brighter(image, seed=42):
 # #
@@ -139,15 +148,18 @@ def data_augmentation(image, mask, size=64):
                 1: shift,
                 2: flipy,
                 3: rotate,
-                4: zoom
+                4: zoom,
+                5: smooth
             }
 
-        which_op = np.random.randint(0, 5)
+        which_op = np.random.randint(0, 6)
 
 
         for sample in range(min(64, image.shape[2]-i)):
             image[:, :, i+sample] = ops[which_op](image[:, :, i+sample], seed=i)
-            mask[:, :, i+sample] = ops[which_op](mask[:, :, i+sample], seed=i)
-
+            if which_op != 5:
+                mask[:, :, i+sample] = ops[which_op](mask[:, :, i+sample], seed=i)
+            else:
+                pass
 
     return image, mask

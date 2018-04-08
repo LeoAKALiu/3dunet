@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.ndimage import gaussian_filter
 from augmentation import data_augmentation
 
 
@@ -13,16 +12,7 @@ def normalize(image):
 
     '''HU=(-1000,0), then normalize the data range(0,1)'''
 
-    image[image>0] = 0
-    image[image<-1000] = -1000
-
-    return (image+1000)/1000
-
-def smooth(image):
-
-    '''gaussian filter'''
-
-    return gaussian_filter(image, sigma=1)
+    return (np.clip(image, -1000, 0) + 1000) / 1000
 
 
 def crop_data(images, size=64):
@@ -83,7 +73,6 @@ def preprocess_data_train(image_path, mask_path, size=64, replica=None, split=Tr
     mask = load_data(mask_path)
 
     image = normalize(image)
-    image = smooth(image)
 
     if replica != None:
 
