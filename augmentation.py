@@ -39,8 +39,9 @@ def rotate(image, mask):
     new_img = np.copy(image)
     new_msk = np.copy(mask)
 
-    img = ndimage.rotate(new_img, angle=randnum, reshape=False)
-    msk = ndimage.rotate(new_msk, angle=randnum, reshape=False)
+    for i in range(image.shape[0]):
+        img[i,...] = ndimage.rotate(new_img[i,...], angle=randnum, reshape=False)
+        msk[i,...] = ndimage.rotate(new_msk[i,...], angle=randnum, reshape=False)
 
     return img, msk
 
@@ -65,12 +66,15 @@ def zoom_xy(image, mask):
 
         return image, mask
     elif z < 1:
-        image = np.pad(image, ((0,0),(0,shape[1]-image.shape[1]),(0,shape[2]-image.shape[2])),
-                       mode='constant',constant_values=0)
-        mask = np.pad(mask, ((0,0),(0,shape[1]-image.shape[1]),(0,shape[2]-image.shape[2])),
-                       mode='constant',constant_values=0)
-        return image, mask
+        img = np.zeros(shape)
+        msk = np.zeros(shape)
+
+        img[:,:image.shape[1], :image.shape[2]] = image
+        msk[:, :mask.shape[1], :mask.shape[2]]  = mask
+
+        return img, msk
     else:
+
         return image, mask
 
 
