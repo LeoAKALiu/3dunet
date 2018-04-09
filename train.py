@@ -28,7 +28,7 @@ def train(image_path, mask_path):
         model.fit_generator(generator=generator(image_train, mask_train),
                             steps_per_epoch=len(image_train),
                             epochs=10,
-                            validation_data=[image_valid, mask_valid],
+                            validation_data=generator(image_valid, mask_valid),
                             #validation_steps=64,
                             verbose=1,
                             callbacks=[stop])

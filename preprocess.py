@@ -58,48 +58,13 @@ def get_split(data_train):
 
     return images_train, images_valid
 
-# def preprocess_data(path, size=64, replica=None, split=True):
-#
-#     images = load_data(path)
-#     images = crop_data(images, size)
-#
-#     if replica != None:
-#         images_re = np.copy(images)
-#         for i in range(1,replica):
-#             images = np.concatenate((images, images_re), axis=-1)
-#     else:
-#         pass
-#
-#     images = reshape_data(images)
-#     images = get_batches(images, size)
-#
-#     if split:
-#         images_train, images_valid = get_split(images)
-#
-#         return images_train, images_valid
-#     else:
-#
-#         return images
-
-def preprocess_data_train(image_path, mask_path, size=64, replica=None, split=True):
+def valid_data(image_path, mask_path):
 
     image = load_data(image_path)
     mask = load_data(mask_path)
 
     image = smooth(image, size)
     image = normalize(image)
-
-    if replica != None:
-
-        img_re = np.copy(image)
-        msk_re = np.copy(mask)
-
-        for i in range(1,replica):
-            img_re, msk_re = data_augmentation(img_re, msk_re, size)
-            image = np.concatenate((image, img_re), axis=-1)
-            mask = np.concatenate((mask, msk_re), axis=-1)
-    else:
-        pass
 
     image = crop_data(image,size)
     image = reshape_data(image)
@@ -109,14 +74,40 @@ def preprocess_data_train(image_path, mask_path, size=64, replica=None, split=Tr
     mask = reshape_data(mask)
     mask = get_batches(mask, size)
 
-    if split:
-        image_train, image_valid = get_split(image)
-        mask_train, mask_valid = get_split(mask)
+    return image, mask
 
-        return image_train, image_valid, mask_train, mask_valid
+def preprocess_data_train(image_path, mask_path, size=64, replica=None):
+
+    image = load_data(image_path)
+    mask = load_data(mask_path)
+
+    image = smooth(image, size)
+    image = normalize(image)
+
+    image = crop_data(image,size)
+    image = reshape_data(image)
+    image = get_batches(image, size)
+
+    mask = crop_data(mask, size)
+    mask = reshape_data(mask)
+    mask = get_batches(mask, size)
+
+    image, mask = data_augmentation(image, mask)
+
+    if replica != None:
+
+        img_re = np.copy(image)
+        msk_re = np.copy(mask)
+
+        for i in range(replica):
+            img_re, msk_re = data_augmentation(img_re, msk_re)
+            image = np.concatenate((image, img_re), axis=0)
+            mask = np.concatenate((mask, msk_re), axis=0)
     else:
+        pass
 
-        return image, mask
+    np.save('./preprocessed_image.npy', image)
+    np.save('./preprocessed_mask.npy', mask)
 
 
 def recover(images, size):
