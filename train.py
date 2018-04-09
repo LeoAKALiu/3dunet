@@ -8,14 +8,14 @@ import os
 
 
 def train(image_path, mask_path):
+
     print('load data>>>>')
+
     image_train, image_valid, mask_train, mask_valid = preprocess_data_train(
         image_path, mask_path, size=64, replica=3, split=True)
 
     print('data loading complete!')
 
-    print('model loaded>>>>')
-    print('fitting model>>>>')
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     with tf.Session(graph=tf.get_default_graph(), config=config) as sess:

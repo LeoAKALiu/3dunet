@@ -109,7 +109,7 @@ def zoom(image, seed=42):
     np.random.seed(seed)
     z = np.random.uniform(0.5,1.5)
 
-    image = ndimage.interpolation.zoom(image, z)
+    image = ndimage.zoom(image, z)
     center = (np.array(image.shape) / 2).astype(int)
     if z > 1:
         return image[(center[0]-half):(center[0]+half),(center[1]-half):(center[1]+half)]
@@ -120,14 +120,6 @@ def zoom(image, seed=42):
     else:
         return image
 
-
-# def brighter(image, seed=42):
-# #
-# #     return image+500
-# #
-# # def darker(image, seed=42):
-# #
-# #     return image-500
 
 def data_augmentation(image, mask, size=64):
 
