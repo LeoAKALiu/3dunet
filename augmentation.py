@@ -39,7 +39,7 @@ def rotate(image, mask):
     new_img = np.copy(image)
     new_msk = np.copy(mask)
 
-    for i in range(image.shape[0]):
+    for i in range(image.shape[2]):
         new_img[...,i] = ndimage.rotate(new_img[...,i], angle=randnum, reshape=False)
         new_msk[...,i] = ndimage.rotate(new_msk[...,i], angle=randnum, reshape=False)
 
@@ -61,16 +61,16 @@ def zoom_xy(image, mask):
 
     center = (np.array(image.shape) / 2).astype(int)
     if z > 1:
-        image = image[(center[1]-half):(center[1]+half),(center[2]-half):(center[2]+half),:]
-        mask = mask[(center[1]-half):(center[1]+half),(center[2]-half):(center[2]+half),:]
+        image = image[(center[0]-half):(center[0]+half),(center[1]-half):(center[1]+half),:]
+        mask = mask[(center[0]-half):(center[0]+half),(center[1]-half):(center[1]+half),:]
 
         return image, mask
     elif z < 1:
         img = np.zeros(shape)
         msk = np.zeros(shape)
 
-        img[:image.shape[1], :image.shape[2],:] = image
-        msk[:mask.shape[1], :mask.shape[2],:]  = mask
+        img[:image.shape[0], :image.shape[1],:] = image
+        msk[:mask.shape[0], :mask.shape[1],:]  = mask
 
         return img, msk
     else:
@@ -84,7 +84,7 @@ def zoom_z(image, mask):
     image.shape = (height, width, size) '''
 
     z = np.random.uniform(0.5, 1.5)
-    size = image.shape[0]
+    size = image.shape[2]
 
     img_z = ndimage.zoom(image, [1,1,z])
     msk_z = ndimage.zoom(mask, [1,1,z])
@@ -93,7 +93,7 @@ def zoom_z(image, mask):
         img = img_z[...,:size]
         msk = msk_z[...,:size]
     elif z < 1:
-        p = image.shape[0] - img_z.shape[0]
+        p = image.shape[2] - img_z.shape[2]
         img = np.concatenate((img_z, img_z[...,:p]), axis=-1)
         msk = np.concatenate((msk_z, msk_z[...,:p]), axis=-1)
     else:
@@ -114,7 +114,7 @@ def data_augmentation(image, mask, size):
                 1: shift,
                 2: flipy,
                 3: rotate,
-                4: zoom,
+                4: zoom_xy,
                 5: zoom_z
             }
 

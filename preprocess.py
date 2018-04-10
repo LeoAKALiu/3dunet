@@ -84,7 +84,7 @@ def preprocess_data_train(image_path, mask_path, size=64, replica=None):
     image = smooth(image, size)
     image = normalize(image)
 
-    image, mask = data_augmentation(image, mask)
+    image, mask = data_augmentation(image, mask, size)
 
     if replica != None:
 
@@ -92,7 +92,7 @@ def preprocess_data_train(image_path, mask_path, size=64, replica=None):
         msk_re = np.copy(mask)
 
         for i in range(replica):
-            img_re, msk_re = data_augmentation(img_re, msk_re)
+            img_re, msk_re = data_augmentation(img_re, msk_re, size)
             image = np.concatenate((image, img_re), axis=-1)
             mask = np.concatenate((mask, msk_re), axis=-1)
     else:
