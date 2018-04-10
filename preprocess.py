@@ -58,7 +58,7 @@ def get_split(data_train):
 
     return images_train, images_valid
 
-def valid_data(image_path, mask_path):
+def valid_data(image_path, mask_path, size=64):
 
     image = load_data(image_path)
     mask = load_data(mask_path)
@@ -84,14 +84,6 @@ def preprocess_data_train(image_path, mask_path, size=64, replica=None):
     image = smooth(image, size)
     image = normalize(image)
 
-    image = crop_data(image,size)
-    image = reshape_data(image)
-    image = get_batches(image, size)
-
-    mask = crop_data(mask, size)
-    mask = reshape_data(mask)
-    mask = get_batches(mask, size)
-
     image, mask = data_augmentation(image, mask)
 
     if replica != None:
@@ -101,10 +93,19 @@ def preprocess_data_train(image_path, mask_path, size=64, replica=None):
 
         for i in range(replica):
             img_re, msk_re = data_augmentation(img_re, msk_re)
-            image = np.concatenate((image, img_re), axis=0)
-            mask = np.concatenate((mask, msk_re), axis=0)
+            image = np.concatenate((image, img_re), axis=-1)
+            mask = np.concatenate((mask, msk_re), axis=-1)
     else:
         pass
+
+    image = crop_data(image,size)
+    image = reshape_data(image)
+    image = get_batches(image, size)
+
+    mask = crop_data(mask, size)
+    mask = reshape_data(mask)
+    mask = get_batches(mask, size)
+
 
     np.save('./preprocessed_image.npy', image)
     np.save('./preprocessed_mask.npy', mask)

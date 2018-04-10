@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.ndimage import zoom
 
 
 def generator(images, masks):
@@ -10,11 +9,8 @@ def generator(images, masks):
 
             s = np.random.randint(images.shape[0])
 
-
             img = images[s]
             msk = masks[s]
-
-
 
             x_batch.append(img)
             y_batch.append(msk)
