@@ -35,7 +35,7 @@ def flipy(image, mask):
 
 def rotate(image, mask):
 
-    randnum = np.random.randint(1,360)
+    randnum = np.random.randint(15,75)
     new_img = np.copy(image)
     new_msk = np.copy(mask)
 
@@ -54,23 +54,31 @@ def zoom_xy(image, mask):
     shape = image.shape
     half = int(image.shape[1]/2)
 
-    z = np.random.uniform(0.5,1.5)
+    z = np.random.uniform(0.6,1.5)
 
     image = ndimage.zoom(image, [z,z,1])
     mask = ndimage.zoom(mask, [z,z,1])
 
     center = (np.array(image.shape) / 2).astype(int)
+
     if z > 1:
-        image = image[(center[0]-half):(center[0]+half),(center[1]-half):(center[1]+half),:]
-        mask = mask[(center[0]-half):(center[0]+half),(center[1]-half):(center[1]+half),:]
+
+        a = center[0] - half
+
+        image = image[a:a+shape[0],a:a+shape[0],:]
+        mask = mask[a:a+shape[0],a:a+shape[0],:]
 
         return image, mask
+
     elif z < 1:
+
         img = np.zeros(shape)
         msk = np.zeros(shape)
 
-        img[:image.shape[0], :image.shape[1],:] = image
-        msk[:mask.shape[0], :mask.shape[1],:]  = mask
+        a = half - center[0]
+
+        img[a:a+image.shape[0], a:a+image.shape[0],:] = image
+        msk[a:a+image.shape[0], a:a+image.shape[0],:] = mask
 
         return img, msk
     else:
@@ -83,7 +91,7 @@ def zoom_z(image, mask):
     '''apply zoom on axis z randomly,
     image.shape = (height, width, size) '''
 
-    z = np.random.uniform(0.5, 1.5)
+    z = np.random.uniform(0.6, 1.5)
     size = image.shape[2]
 
     img_z = ndimage.zoom(image, [1,1,z])

@@ -84,25 +84,28 @@ def preprocess_data_train(image_path, mask_path, size=64, replica=None):
     image = smooth(image, size)
     image = normalize(image)
 
-    image, mask = data_augmentation(image, mask, size)
+    img, msk = data_augmentation(image, mask, size)
 
-    if replica != None:
-
-        img_re = np.copy(image)
-        msk_re = np.copy(mask)
+    if replica:
 
         for i in range(replica):
+
+            img_re = np.copy(image)
+            msk_re = np.copy(mask)
+
             img_re, msk_re = data_augmentation(img_re, msk_re, size)
-            image = np.concatenate((image, img_re), axis=-1)
-            mask = np.concatenate((mask, msk_re), axis=-1)
+            img = np.concatenate((img, img_re), axis=-1)
+            msk = np.concatenate((msk, msk_re), axis=-1)
+
     else:
+
         pass
 
-    image = crop_data(image,size)
+    image = crop_data(img,size)
     image = reshape_data(image)
     image = get_batches(image, size)
 
-    mask = crop_data(mask, size)
+    mask = crop_data(msk, size)
     mask = reshape_data(mask)
     mask = get_batches(mask, size)
 
