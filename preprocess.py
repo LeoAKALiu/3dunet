@@ -33,7 +33,14 @@ def crop_data(images, size=64):
 
     '''reshape images into (64, 64, n_samples*64)'''
 
-    return images.reshape((size, images.shape[1], -1), order='F').reshape((size, size, -1))
+    keep_z = int(images.shape[-1]/size)*size
+    img = images[:64,:64,:1]
+
+    for i in range(0,images.shape[0],size):
+        for j in range(0,images.shape[1],size):
+            img = np.concatenate((img, images[i:i+size,j:j+size,:keep_z]),axis=-1)
+
+    return img
 
 
 def reshape_data(images):
