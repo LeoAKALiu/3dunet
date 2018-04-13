@@ -40,6 +40,8 @@ def crop_data(images, size=64):
         for j in range(0,images.shape[1],size):
             img = np.concatenate((img, images[i:i+size,j:j+size,:keep_z]),axis=-1)
 
+    img = img[...,1:]
+
     return img
 
 
